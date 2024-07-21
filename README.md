@@ -65,4 +65,33 @@ struct CreateView: View {
             Text("Next Page")
         }
     }
+}
 ```
+
+#### Native
+Download `NativeAdView`, and design it.
+```swift
+struct EXNativeAdsView: View {
+    private let viewModel = AdsNativeViewModel()
+    
+    private let xib = Bundle.main.loadNibNamed(
+        "NativeAdView",
+        owner: nil,
+        options: nil)?.first as! GADNativeAdView
+    
+    var body: some View {
+        AdsNativeView(viewModel: viewModel, adView: xib)
+            .onAppear {
+                viewModel.refresh()
+            }
+    }
+}
+
+extension AdsNativeViewModel {
+    func refresh() {
+        refresh(unitId: "")
+    }
+}
+```
+
+

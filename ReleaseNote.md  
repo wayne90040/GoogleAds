@@ -10,3 +10,25 @@
 
 - [Added] Banner Ads
 - [Added] Interstitial Ads
+
+## 1.0.1
+
+### Date
+
+- 2024/07/19
+
+### Features
+
+- [Fix] Fix the version of `GoogleMobileAds` to 11.5.0
+
+## 1.0.2
+
+### Date
+
+- 2024/07/21
+
+### Features
+
+- [Fix] Fix the version of `GoogleMobileAds` to 11.5.0
+
+

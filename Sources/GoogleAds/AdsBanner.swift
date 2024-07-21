@@ -28,14 +28,29 @@ public struct AdsBanner: UIViewRepresentable {
     /// unitID
     public var id: String
     public var size: Size
+    public var onReceived: (() -> Void)?
+    public var onFailed: ((Error) -> Void)?
     
-    public init(id: String, size: Size = .medium) {
+    public init(
+        id: String,
+        size: Size = .medium,
+        onReceived: (() -> Void)? = nil,
+        onFailed: ((Error) -> Void)? = nil
+    ) {
         self.id = id
         self.size = size
+        self.onReceived = onReceived
+        self.onFailed = onFailed
     }
     
     public func makeCoordinator() -> Coordinator {
-        Coordinator()
+        Coordinator(
+            onReceived: {
+                onReceived?()
+            },
+            onFailed: {
+                onFailed?($0)
+            })
     }
     
     public func makeUIView(context: Context) -> GADBannerView {
@@ -50,28 +65,54 @@ public struct AdsBanner: UIViewRepresentable {
     public func updateUIView(_ uiView: GADBannerView, context: Context) { }
     
     public class Coordinator: NSObject, GADBannerViewDelegate {
+        
+        let onReceived: (()->Void)?
+        let onFailed: ((Error) -> Void)?
+        
+        init(
+            onReceived: (()->Void)?,
+            onFailed: ( (Error) -> Void)?
+        ) {
+            self.onReceived = onReceived
+            self.onFailed = onFailed
+        }
+        
         public func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+            onReceived?()
+#if DEBUG
             debugPrint("bannerViewDidReceiveAd")
+#endif
         }
         
         public func bannerView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: Error) {
+            onFailed?(error)
+#if DEBUG
             debugPrint("bannerView:didFailToReceiveAdWithError: \(error.localizedDescription)")
+#endif
         }
         
         public func bannerViewDidRecordImpression(_ bannerView: GADBannerView) {
+#if DEBUG
             debugPrint("bannerViewDidRecordImpression")
+#endif
         }
         
         public func bannerViewWillPresentScreen(_ bannerView: GADBannerView) {
+#if DEBUG
             debugPrint("bannerViewWillPresentScreen")
+#endif
         }
         
         public func bannerViewWillDismissScreen(_ bannerView: GADBannerView) {
+#if DEBUG
             debugPrint("bannerViewWillDIsmissScreen")
+#endif
         }
         
         public func bannerViewDidDismissScreen(_ bannerView: GADBannerView) {
+#if DEBUG
             debugPrint("bannerViewDidDismissScreen")
+#endif
         }
     }
 }
@@ -80,28 +121,28 @@ extension AdsBanner.Size {
     public var adsize: GADAdSize {
         switch self {
         case .normal:
-            return GADAdSizeBanner
+            GADAdSizeBanner
             
         case .large:
-            return GADAdSizeLargeBanner
+            GADAdSizeLargeBanner
             
         case .medium:
-            return GADAdSizeMediumRectangle
+            GADAdSizeMediumRectangle
             
         case .fullBanner:
-            return GADAdSizeFullBanner
+            GADAdSizeFullBanner
             
         case .leaderboard:
-            return GADAdSizeLeaderboard
+            GADAdSizeLeaderboard
             
         case .skyscraper:
-            return GADAdSizeSkyscraper
+            GADAdSizeSkyscraper
             
         case .fluid:
-            return GADAdSizeFluid
+            GADAdSizeFluid
             
         case .invalid:
-            return GADAdSizeInvalid
+            GADAdSizeInvalid
         }
     }
 }
